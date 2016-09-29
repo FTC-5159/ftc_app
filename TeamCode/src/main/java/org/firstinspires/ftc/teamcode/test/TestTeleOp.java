@@ -19,7 +19,7 @@ public class TestTeleOp extends OpMode {
 
     public void init() {
         this.hwMap = hardwareMap;
-        this.hardware = new RobotHardware(hwMap);
+        this.hardware = new RobotHardware(hwMap, telemetry);
     }
 
     public void loop() {
