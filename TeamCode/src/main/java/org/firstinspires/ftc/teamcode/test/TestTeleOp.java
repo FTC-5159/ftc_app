@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.test.util.RobotHardware;
  */
 
 @TeleOp(name = "TeleOp", group= "Test")
+@Disabled
 @SuppressWarnings("unused")
 public class TestTeleOp extends OpMode {
 
