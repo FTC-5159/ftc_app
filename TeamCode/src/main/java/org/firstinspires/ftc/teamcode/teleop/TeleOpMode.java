@@ -21,7 +21,7 @@ public class TeleOpMode extends OpMode {
     public void init() {
 
         // Initialize Robot
-        RobotUtil.init(gamepad1, gamepad2, hardwareMap, telemetry);
+        RobotUtil.init(gamepad1, gamepad2, hardwareMap, telemetry, this);
         hardware = new Robot();
     }
 

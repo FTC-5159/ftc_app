@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.lang.reflect.Field;
 
@@ -13,78 +10,47 @@ import java.lang.reflect.Field;
  * of a button on the gamepad.
  * @author Devin Chotzen-Hartzell
  */
-public class ToggleServo {
+public class ToggleServo implements Toggleable {
 
-    /**
-     *
-     */
     public Servo servo;
     public Field field;
     public String button;
     public float[] pos;
-    public Gamepad gamepad;
 
     /**
-     * false = pos[0]
-     * true = pos[1]
+     * false = pos[0] - default position
+     * true = pos[1]  - extended position
      */
     public boolean currentPos = false;
-    public boolean buttonAlreadyPressed = false;
 
 
     /**
      * Class constructor that defines the properties of the ToggleServo
-     * @param hwMap     opmode's hardware map object
      * @param name      the name of the servo in the config
-     * @param gamepad   the gamepad that controls the servo
+     * @param gamepad   number of the gamepad that controls the servo
      * @param button    name of the boolean button on the gamepad
-     * @param pos       array of positions:
+     * @param positions array of positions:
      *                  pos[0] is default position
      *                  pos[1] is extended position
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
      */
-    public ToggleServo(HardwareMap hwMap, String name, Gamepad gamepad,
-                       String button, float[] pos, Telemetry telemetry)
+    public ToggleServo(String name, int gamepad, String button, float[] positions)
             throws NoSuchFieldException {
         // Initialize class members
-        this.servo = hwMap.servo.get(name);
-        this.button = button;
+        this.servo = RobotUtil.hardwareMap.servo.get(name);
+        servo.setPosition(pos[0]);
         this.field = Gamepad.class.getDeclaredField(this.button);
-        this.gamepad = gamepad;
-        this.pos = pos;
-
-        this.servo.setPosition(pos[0]);
-    }
-
-
-    /**
-     * Called every hardware cycle to check if the servo's
-     * position needs to be updated, and update it if it does.
-     * @throws IllegalAccessException
-     */
-    public void update() throws IllegalAccessException {
-        // Check if button is pressed
-        if (getPressed()) {
-            // Check if the button is already pressed
-            if (!buttonAlreadyPressed) {
-                buttonAlreadyPressed = true;
-                currentPos = !currentPos;
-                servo.setPosition(pos[(currentPos) ? 1 : 0]);
-            }
-        } else {
-            buttonAlreadyPressed = false;
-        }
+        this.pos = positions;
+        new ToggleButton(button, gamepad, this);
     }
 
     /**
-     * @return The current value of the gamepad button
-     * @throws IllegalAccessException
+     * Toggles the servo.
+     * Triggered by the ToggleButton object for the specific instance.
      */
-    public boolean getPressed() throws IllegalAccessException {
-        try {
-            return field.getBoolean(gamepad);
-        } catch (IllegalAccessException e) {
-            return false;
-        }
+    public void onToggle() {
+        currentPos = !currentPos;
+        servo.setPosition(pos[currentPos?1:0]);
+        RobotUtil.telemetry.addData(servo.getDeviceName(), servo.getPosition());
     }
 }

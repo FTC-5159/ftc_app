@@ -5,9 +5,21 @@ package org.firstinspires.ftc.teamcode.util;
  */
 public class Robot {
 
-    public DriveMotors driveMotors;
+    public static final float[] BEACON_SERVO_POSITIONS = {0.0F, 1.0F};
 
-    public Robot() throws NullPointerException {
+    public DriveMotors driveMotors;
+    public ToggleServo beaconPusher;
+
+    public Robot() throws NullPointerException, NoSuchFieldException {
         driveMotors = new DriveMotors(RobotUtil.hardwareMap);
+        beaconPusher = new ToggleServo("beacon_servo", 1, "a", BEACON_SERVO_POSITIONS);
+
+    }
+
+    public void update() throws IllegalAccessException{
+        // Pulse the toggle buttons
+        ToggleButton.pulse();
+
+        // Update drive motor positions
     }
 }

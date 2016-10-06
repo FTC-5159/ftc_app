@@ -11,8 +11,6 @@ public class DriveMotors {
     private DcMotor LEFT_DRIVE;
     private DcMotor RIGHT_DRIVE;
 
-    private boolean encodersEnabled = false;
-
     private int PULSE_PER_REV = 280;
     private float WHEEL_DIAMETER = 4.0F;
     private double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
@@ -26,7 +24,6 @@ public class DriveMotors {
     }
 
     public void setEncoders(boolean b) {
-        encodersEnabled = b;
         LEFT_DRIVE.setMode(b? DcMotor.RunMode.RUN_USING_ENCODER : DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RIGHT_DRIVE.setMode(b? DcMotor.RunMode.RUN_USING_ENCODER : DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -42,6 +39,14 @@ public class DriveMotors {
                 Thread.sleep(50);
             } catch (InterruptedException e) {}
         }
+    }
+
+    public void drive(float l_pwr, float r_pwr) {
+
+    }
+
+    public void reverseDrive() {
+
     }
 
     public boolean isBusy() {
