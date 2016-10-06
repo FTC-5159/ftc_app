@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
- * Created by dchotzen-hartzell19 on 10/3/16.
+ * @author Devin Chotzen-Hartzell
  */
 public class DriveMotors {
 

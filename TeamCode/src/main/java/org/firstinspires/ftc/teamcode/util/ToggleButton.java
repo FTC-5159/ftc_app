@@ -9,6 +9,7 @@ import java.util.ArrayList;
  * Updates things when buttons are toggled. Works with Toggleable interface.
  * @see Robot
  * @see Toggleable
+ * @author Devin Chotzen-Hartzell
  */
 public class ToggleButton {
 

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /**
  * Storage unit to store information like gamepads, hardware map, telemetry, and running op mode.
  * This prevents having to pass this information to each class every time.
+ * @author Devin Chotzen-Hartzell
  */
 public class RobotUtil {
 

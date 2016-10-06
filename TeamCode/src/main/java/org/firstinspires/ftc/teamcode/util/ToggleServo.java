@@ -53,4 +53,14 @@ public class ToggleServo implements Toggleable {
         servo.setPosition(pos[currentPos?1:0]);
         RobotUtil.telemetry.addData(servo.getDeviceName(), servo.getPosition());
     }
+
+    /**
+     * Manually sets the position of the servo
+     * @param b     Position of the servo after method is executed
+     */
+    public void setExtended(boolean b) {
+        currentPos = b;
+        servo.setPosition(pos[currentPos?1:0]);
+        RobotUtil.telemetry.addData(servo.getDeviceName(), servo.getPosition());
+    }
 }
