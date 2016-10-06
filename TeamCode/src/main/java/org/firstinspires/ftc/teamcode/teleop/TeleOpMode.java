@@ -27,7 +27,7 @@ public class TeleOpMode extends OpMode {
         try {
             hardware = new Robot();
         } catch (Exception e) {
-            telemetry.addLine("Error: " + e.toString());
+            telemetry.addData("Error", e.toString());
         }
     }
 
@@ -35,13 +35,18 @@ public class TeleOpMode extends OpMode {
      * The `start` method is called when the opmode is begun on the Driver Station
      */
     public void start() {
-        // Empty for now
+        // Nothing here yet.
     }
 
     /**
-     * The `loop` method is called several times each second
+     * The `loop` method is called several times each second. How many? We have no clue.
      */
     public void loop() {
+        try {
+            hardware.update();
 
+        } catch (Exception e) {
+            telemetry.addData("Error", e.toString());
+        }
     }
 }
