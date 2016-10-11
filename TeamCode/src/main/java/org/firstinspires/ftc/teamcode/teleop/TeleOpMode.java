@@ -44,7 +44,6 @@ public class TeleOpMode extends OpMode {
     public void loop() {
         try {
             hardware.update();
-
         } catch (Exception e) {
             telemetry.addData("Error", e.toString());
         }

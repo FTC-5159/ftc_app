@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -18,7 +19,6 @@ public class RobotUtil {
     public static HardwareMap hardwareMap;
     public static Telemetry telemetry;
     public static OpMode opMode;
-
     /**
      * Called once during init() method in OpMode to initialize all variables
      * @param gp1       Gamepad #1

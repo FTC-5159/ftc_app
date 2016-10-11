@@ -16,10 +16,11 @@ public class Robot {
 
     }
 
-    public void update() throws IllegalAccessException{
+    public void update() throws IllegalAccessException, InterruptedException {
         // Pulse the toggle buttons
         ToggleButton.pulse();
 
+        driveMotors.update();
         // Update drive motor positions
     }
 }
