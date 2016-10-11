@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 /**
  * Class to handle the drive train. Encoders part not yet tested.
  * @author Devin Chotzen-Hartzell
@@ -150,7 +148,7 @@ public class DriveMotors implements Toggleable {
 
     /**
      * For autonomous: Checks if motors are running already
-     * @return
+     * @return Whether the motors are doing something or not
      */
     public boolean isBusy() {
         return LEFT_DRIVE.isBusy() || RIGHT_DRIVE.isBusy();
