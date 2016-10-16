@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.disregard.old.autonomous.prototype.colorsensor;
+package org.firstinspires.ftc.teamcode.prototype.colorsensor;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
