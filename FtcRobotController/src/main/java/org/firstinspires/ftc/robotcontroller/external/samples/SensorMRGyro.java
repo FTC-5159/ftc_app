@@ -96,6 +96,7 @@ public class SensorMRGyro extends LinearOpMode {
       yVal = gyro.rawY();
       zVal = gyro.rawZ();
 
+
       // get the heading info.
       // the Modern Robotics' gyro sensor keeps
       // track of the current heading for the Z axis only.

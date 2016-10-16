@@ -11,7 +11,7 @@ public class Robot {
     public ToggleServo beaconPusher;
 
     public Robot() throws NullPointerException, NoSuchFieldException {
-        driveMotors = new DriveMotors(RobotUtil.hardwareMap);
+        driveMotors = new DriveMotors();
         beaconPusher = new ToggleServo("beacon_servo", 1, "a", BEACON_SERVO_POSITIONS);
 
     }

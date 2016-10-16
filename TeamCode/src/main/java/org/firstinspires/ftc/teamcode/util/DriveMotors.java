@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -23,11 +22,10 @@ public class DriveMotors implements Toggleable {
     /**
      * Constructor for the object. Initializes variables and theoretically screams at you if you
      * did something bad in the configuration.
-     * @param hardwareMap
      */
-    public DriveMotors(HardwareMap hardwareMap) {
-        LEFT_DRIVE = hardwareMap.dcMotor.get("left_drive");
-        RIGHT_DRIVE = hardwareMap.dcMotor.get("right_drive");
+    public DriveMotors() {
+        LEFT_DRIVE = RobotUtil.hardwareMap.dcMotor.get("left_drive");
+        RIGHT_DRIVE = RobotUtil.hardwareMap.dcMotor.get("right_drive");
 
         LEFT_DRIVE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -77,14 +75,15 @@ public class DriveMotors implements Toggleable {
      * @param l_distance    Distance (in) for the left motor
      * @param r_distance    Distance (in) for the right motor
      */
-    public void drive(float pwr, double l_distance, double r_distance)
+    public void drive(float pwr, double l_distance, double r_distance, double timeout)
             throws InterruptedException {
         if (!(RobotUtil.opMode instanceof LinearOpMode)) return;
         LinearOpMode opMode = (LinearOpMode)RobotUtil.opMode;
         // turn encoders on
         setEncoders(true);
-
+        opMode.idle();
         runToPosition(true);
+        opMode.resetStartTime();
         // set motor pwr to correct values
         LEFT_DRIVE.setPower(Range.clip(pwr, 0.0, 1.0));
         RIGHT_DRIVE.setPower(Range.clip(pwr, 0.0, 1.0));
@@ -92,7 +91,7 @@ public class DriveMotors implements Toggleable {
         LEFT_DRIVE.setTargetPosition(calcEncoders(l_distance) + LEFT_DRIVE.getCurrentPosition());
         RIGHT_DRIVE.setTargetPosition(calcEncoders(r_distance) + RIGHT_DRIVE.getCurrentPosition());
         // wait until everything is done before returning, update telemetry
-        while (isBusy() && opMode.opModeIsActive()) {
+        while (isBusy() && opMode.opModeIsActive() && opMode.getRuntime() < timeout) {
             RobotUtil.telemetry.addData("Path1", "Running to %7d, %7d", l_distance, r_distance);
             RobotUtil.telemetry.addData("Path2", "Running at %7d %7d",
                     LEFT_DRIVE.getCurrentPosition(), RIGHT_DRIVE.getCurrentPosition());
@@ -105,7 +104,6 @@ public class DriveMotors implements Toggleable {
         RIGHT_DRIVE.setPower(0);
 
         runToPosition(false);
-
         // turn off encoders
         setEncoders(false);
     }
@@ -153,6 +151,4 @@ public class DriveMotors implements Toggleable {
     public boolean isBusy() {
         return LEFT_DRIVE.isBusy() || RIGHT_DRIVE.isBusy();
     }
-
-
 }
