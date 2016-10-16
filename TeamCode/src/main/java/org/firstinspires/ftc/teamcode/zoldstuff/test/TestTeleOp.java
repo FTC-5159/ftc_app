@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.oldstuff.test;
+package org.firstinspires.ftc.teamcode.zoldstuff.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.oldstuff.test.util.RobotHardware;
+import org.firstinspires.ftc.teamcode.zoldstuff.test.util.RobotHardware;
 
 /**
  * Team 5159's test TeleOP
