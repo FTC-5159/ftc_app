@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.zoldstuff.autonomous;
+package org.firstinspires.ftc.teamcode.oldstuff.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.zoldstuff.util.Robot;
-import org.firstinspires.ftc.teamcode.zoldstuff.util.RobotUtil;
+import org.firstinspires.ftc.teamcode.oldstuff.util.Robot;
+import org.firstinspires.ftc.teamcode.oldstuff.util.RobotUtil;
 
 /**
  * Autonomous for when we're red
