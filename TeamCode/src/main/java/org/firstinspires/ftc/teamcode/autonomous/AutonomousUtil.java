@@ -4,7 +4,6 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -14,7 +13,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 public abstract class AutonomousUtil extends LinearOpMode {
 
-    private final int PULSE_PER_REV         = 420;
+    private final int PULSE_PER_REV         = 1120;
     private final double WHEEL_DIAMETER     = 4.0;
     private final double WHEEL_CIRCUMFERENCE= WHEEL_DIAMETER * Math.PI;
     private final double ENCODERS_PER_INCH  = PULSE_PER_REV / WHEEL_CIRCUMFERENCE;
@@ -98,11 +97,10 @@ public abstract class AutonomousUtil extends LinearOpMode {
             RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             runtime.reset();
-            LEFT_DRIVE.setPower(0.6);
-            RIGHT_DRIVE.setPower(0.6);
+            LEFT_DRIVE.setPower(speed);
+            RIGHT_DRIVE.setPower(speed);
 
-            while (opModeIsActive() && LEFT_DRIVE.isBusy() && RIGHT_DRIVE.isBusy()
-                    /*runtime.seconds() < timeout*/) {
+            while (opModeIsActive() && LEFT_DRIVE.isBusy() && RIGHT_DRIVE.isBusy()) {
 
                 error = getError(angle);
                 turn = -getTurnCoef(error);
@@ -128,7 +126,8 @@ public abstract class AutonomousUtil extends LinearOpMode {
                 telemetry.addData("Target", "%7d | %7d", left_target, right_target);
                 telemetry.addData("Current", "%7d | %7d", LEFT_DRIVE.getCurrentPosition(),
                         RIGHT_DRIVE.getCurrentPosition());
-                telemetry.addData("Motor pwr", "%5.2f | %5.2f", leftSpeed, rightSpeed);
+                telemetry.addData("IMotor pwr", "%5.2f | %5.2f", leftSpeed, rightSpeed);
+                telemetry.addData("RMotor pwr", "%5.2f | %5.2f", LEFT_DRIVE.getPower(), rightSpeed);
                 telemetry.update();
             }
 
@@ -139,6 +138,21 @@ public abstract class AutonomousUtil extends LinearOpMode {
             RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+
+    protected void singleTurn(double speed, int angle) {
+        while (opModeIsActive() && !onHeading()) {
+
+        }
+    }
+
+    protected void doubleTurn(double speed, )
+
+    private boolean onHeading(double speed, int angle) {
+
+        return true;
+    }
+
+
 
     protected void turnToGyro(double heading, double speed) {
         // Decide if left or right turn

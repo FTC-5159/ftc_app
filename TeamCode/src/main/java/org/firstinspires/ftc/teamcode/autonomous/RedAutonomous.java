@@ -10,6 +10,8 @@ public class RedAutonomous extends AutonomousUtil {
 
     @Override
     public void runProgram() {
-        drive(20, 15, 0.5, 10);
+
+        // drive(double inches, double angle, double speed, double timeout)
+        drive(60, 0, 0.3, 10);
     }
 }
