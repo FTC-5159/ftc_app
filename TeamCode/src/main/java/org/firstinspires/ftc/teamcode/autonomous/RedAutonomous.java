@@ -10,19 +10,16 @@ public class RedAutonomous extends AutonomousUtil {
 
     @Override
     public void runProgram() throws InterruptedException {
-        drive(31, 0, 0.4, 10);
-        drive(-3.5, 0, 0.4, 10);
-        singleTurn(0.2, 80);
+        driveEnc(31, 0, 0.4, 10, true);
+        driveEnc(-3.5, 0, 0.4, 10, true);
+        singleTurn(0.3, 83);
         driveUntilTouch(0.3);
-        drive(-15.5, 80, 0.4, 10);
-        singleTurn(0.2, 2);
+        resetEncoders();
+        driveEnc(-18, 83, 0.4, 10, false);
+        singleTurn(0.3, 5);
         senseRed(0.2);
-        drive(25, 0, 0.4, 10);
-        singleTurn(0.2, 80);
-        driveUntilTouch(0.1);
-        drive(-15.5, 80, 0.4, 10);
-        singleTurn(0.2, 2);
-        senseRed(0.2);
+        //driveEnc(25, 0, 0.2, 10);
+        //senseRed(0.2);
 
     }
 

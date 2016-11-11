@@ -20,6 +20,7 @@ public abstract class AutonomousUtil extends LinearOpMode {
     private final int HEADING_THRESHOLD     = 5;
 
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime timeAfterReset = new ElapsedTime();
 
 
     public DcMotor LEFT_DRIVE,
@@ -47,38 +48,51 @@ public abstract class AutonomousUtil extends LinearOpMode {
 
         RIGHT_DRIVE.setDirection(DcMotor.Direction.REVERSE);
 
-        telemetry.addData(">", "Calibrating");
-        telemetry.update();
 
-        GYRO_SENSOR.calibrate();
 
-        while (!isStopRequested() && GYRO_SENSOR.isCalibrating())  {
-            sleep(50);
+
+
+        waitForStart();
+        try {
+            telemetry.addData(">", "Calibrating");
+            telemetry.update();
+
+            GYRO_SENSOR.calibrate();
+
+            while (!isStopRequested() && GYRO_SENSOR.isCalibrating())  {
+                sleep(50);
+                idle();
+            }
+
+            LEFT_DRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            RIGHT_DRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             idle();
-        }
+            LEFT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+            telemetry.addData(">", "Finished Calibrating");
+            telemetry.update();
+            timeAfterReset.reset();
+            runProgram();
+        } catch (Exception e) {}
+
+    }
+
+    public int calcDist(double length) {
+        length /= WHEEL_CIRCUMFERENCE;
+        length *= PULSE_PER_REV;
+        return (int)length;
+    }
+
+    public void resetEncoders() {
         LEFT_DRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RIGHT_DRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         idle();
         LEFT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        telemetry.addData(">", "Finished Calibrating");
-        telemetry.update();
-
-        waitForStart();
-        try {
-            runProgram();
-        } catch (Exception e) {}
-        while (opModeIsActive()) {
-            telemetry.addData(">", "Robot Heading %s", GYRO_SENSOR.getIntegratedZValue());
-            telemetry.update();
-            idle();
-        }
-
     }
 
-    protected void drive(double inches, double angle, double speed, double timeout) {
+    protected void driveEnc(double inches, double angle, double speed, double timeout, boolean correct) {
 
         double  error,
                 turn,
@@ -88,14 +102,13 @@ public abstract class AutonomousUtil extends LinearOpMode {
 
 
         if (opModeIsActive()) {
+            resetEncoders();
             LEFT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            inches /= WHEEL_CIRCUMFERENCE;
-            inches *= PULSE_PER_REV;
 
-            int left_target = LEFT_DRIVE.getCurrentPosition() + (int)inches;
-            int right_target = RIGHT_DRIVE.getCurrentPosition() + (int)inches;
+            int left_target = LEFT_DRIVE.getCurrentPosition() + calcDist(inches);
+            int right_target = RIGHT_DRIVE.getCurrentPosition() + calcDist(inches);
 
             LEFT_DRIVE.setTargetPosition(left_target);
             RIGHT_DRIVE.setTargetPosition(right_target);
@@ -109,12 +122,16 @@ public abstract class AutonomousUtil extends LinearOpMode {
 
             while (opModeIsActive() && LEFT_DRIVE.isBusy() && RIGHT_DRIVE.isBusy()) {
 
+                if (correct) {
+                    int posDiff = LEFT_DRIVE.getCurrentPosition() - RIGHT_DRIVE.getCurrentPosition();
+                    turn = Range.clip(posDiff * 0.003, -1, 1);
 
-                int posDiff = LEFT_DRIVE.getCurrentPosition() - RIGHT_DRIVE.getCurrentPosition();
-                turn = Range.clip(posDiff * 0.005, -1, 1);
-
-                LEFT_DRIVE.setPower(speed - turn);
-                RIGHT_DRIVE.setPower(speed + turn);
+                    LEFT_DRIVE.setPower(speed - turn);
+                    RIGHT_DRIVE.setPower(speed + turn);
+                } else {
+                    LEFT_DRIVE.setPower(speed);
+                    RIGHT_DRIVE.setPower(speed);
+                }
 
 
                 //telemetry.addData("Err | Trn", "%5.1f | %5.1f",  error, turn);
@@ -229,17 +246,26 @@ public abstract class AutonomousUtil extends LinearOpMode {
 
     protected void driveUntilTouch(double pwr) {
         if (opModeIsActive()) {
+
+            resetEncoders();
             LEFT_DRIVE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             LEFT_DRIVE.setPower(pwr);
             RIGHT_DRIVE.setPower(pwr);
+            double turn;
 
             while (!TOUCH_SENSOR.isPressed() && opModeIsActive()) {
+                int posDiff = LEFT_DRIVE.getCurrentPosition() - RIGHT_DRIVE.getCurrentPosition();
+                turn = Range.clip(posDiff * 0.003, -1, 1);
+
+                LEFT_DRIVE.setPower(pwr - turn);
+                RIGHT_DRIVE.setPower(pwr + turn);
                 telemetry.addData("Motor Pwr", "%5.2f | %5.2f", LEFT_DRIVE.getPower(), RIGHT_DRIVE.getPower());
                 telemetry.addLine("Driving until touch");
                 telemetry.update();
             }
+            sleep(500);
 
             LEFT_DRIVE.setPower(0);
             RIGHT_DRIVE.setPower(0);
@@ -267,6 +293,8 @@ public abstract class AutonomousUtil extends LinearOpMode {
 
             LEFT_DRIVE.setPower(0);
             RIGHT_DRIVE.setPower(0);
+            if (!opModeIsActive())
+                return;
             telemetry.addLine("Time until seen " + (float)runtime.seconds());
             driveByTime(-0.2, 0.25);
 
@@ -383,6 +411,34 @@ public abstract class AutonomousUtil extends LinearOpMode {
             FLYWHEEL.setPower(0);
             INTAKE.setPower(0);
         }
+    }
+
+    public void turnEnc(double amt, double pwr) {
+        LEFT_DRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RIGHT_DRIVE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
+        LEFT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RIGHT_DRIVE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        int turnAmtEnc = Math.abs(calcDist((amt/360) * Math.PI * 2 * 15.0));
+        DcMotor m = (amt>0? RIGHT_DRIVE:LEFT_DRIVE);
+        m.setTargetPosition(turnAmtEnc + RIGHT_DRIVE.getCurrentPosition());
+        m.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        m.setPower(pwr);
+
+        while (opModeIsActive() && m.isBusy()) {
+            telemetry.addData("Target", "%7d | %7d", LEFT_DRIVE.getTargetPosition(), RIGHT_DRIVE.getTargetPosition());
+            telemetry.addData("Current", "%7d | %7d", LEFT_DRIVE.getCurrentPosition(), RIGHT_DRIVE.getCurrentPosition());
+            //telemetry.addData("IMotor pwr", "%5.2f | %5.2f", leftSpeed, rightSpeed);
+            telemetry.addData("RMotor pwr", "%5.2f | %5.2f", LEFT_DRIVE.getPower(), RIGHT_DRIVE.getPower());
+            telemetry.addData("Deg Left", (turnAmtEnc - (m.getTargetPosition() - m.getCurrentPosition()))
+                    * WHEEL_CIRCUMFERENCE / PULSE_PER_REV / Math.PI / 2 / 15.0 * 360);
+            telemetry.update();
+        }
+
+        m.setPower(0);
+        m.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public abstract void runProgram() throws InterruptedException;

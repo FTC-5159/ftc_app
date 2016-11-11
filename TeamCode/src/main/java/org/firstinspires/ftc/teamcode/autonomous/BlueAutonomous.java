@@ -11,11 +11,11 @@ public class BlueAutonomous extends AutonomousUtil {
     @Override
     public void runProgram() throws InterruptedException {
 
-        drive(31, 0, 0.4, 10);
+        driveEnc(31, 0, 0.4, 10, true);
         shoot(4);
         singleTurn(0.2, -90);
         driveUntilTouch(0.3);
-        drive(-17.5, 0, 0.4, 10);
+        driveEnc(-17.5, 0, 0.4, 10, true);
         singleTurn(0.2, -168);
         senseBlue(-0.3);
         senseBlue(-0.3);
